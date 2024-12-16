@@ -12,6 +12,20 @@ import asyncio
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
+
+# Simple HTTP server to keep the service alive
+class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'Bot is running')
+
+def run_http_server():
+    port = int(os.getenv('PORT', 10000))
+    server = HTTPServer(('0.0.0.0', port), SimpleHTTPRequestHandler)
+    server.serve_forever()
 
 load_dotenv()
 GOOGLE_AI_KEY = os.getenv("GOOGLE_AI_KEY")
@@ -61,6 +75,8 @@ async def on_ready():
     print("----------------------------------------")
     print(f'Gemini Bot Logged in as {bot.user}')
     print("----------------------------------------")
+    # Start HTTP server in a separate thread
+    threading.Thread(target=run_http_server, daemon=True).start()
     
 @bot.event
 async def on_message(message):
