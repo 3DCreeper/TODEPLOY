@@ -1,0 +1,8 @@
+aiohttp
+beautifulsoup4
+discord.py
+google-generativeai
+python-dotenv
+PyMuPDF
+requests
+youtube_transcript_api
